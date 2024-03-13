@@ -116,7 +116,7 @@ const chatServer = http.createServer(function (req, res) {
         }
 
     });
-}).listen(80, function () {
+}).listen(10000, function () {
     console.log("Server Listening")
 });
 

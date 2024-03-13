@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #response {
+            align-items: center;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #roomName,
+        #btn_1,
+        #join_room {
+            width: 50%;
+        }
+    </style>
+    <!-- // app/views/includes/foot.html which feeds into the index.html -->
+
+</head>
+
+<body>
+    <h1 align="center">Chat Page</h1>
+    <div id="transcript"></div>
+    <span id="roomJoinmsg"></span>
+    <label for="roomName">Enter The room ID</label>
+    <input id="roomName" type="text"><br><br><button id="join_room">Join Room</button>
+    <br><br>
+    <input id="messagetoSend" type="message_to_send">
+    <div id="response"></div>
+    <button id="send_msg">send</button>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <script>
+        var socket;
+        var room = document.getElementById('roomName').value;
+        document.addEventListener('DOMContentLoaded', () => {
+            socket = io('http://localhost:3000');
+            socket.on('connect', () => {
+                console.log('Connected to server');
+
+
+                // socket.emit('join room', room);
+                
+                var room = document.getElementById('roomName').value;
+                socket.on('message', (room, message) => {
+                    console.log(`Message from ${room}:`, message);
+                    document.getElementById('transcript').innerHTML+=`<br><span>${message}</span>`
+                });
+
+
+            });
+        });
+        document.getElementById('send_msg').addEventListener('click', function () {
+            let message = document.getElementById('messagetoSend').value;
+            socket.emit('sendMessageToRoom', room, message,user_socketID, (response) => {
+                // This is the callback function that will be executed when the server sends a response
+                console.log('Server response:', response);
+            });
+        });
+
+
+
+
+        document.getElementById('join_room').addEventListener('click', function () {
+            const joinRoom = (room) => {
+                socket.emit('join room', room);
+                console.log('Joined')
+                document.getElementById('roomJoinmsg').innerText = "Joined"
+            };
+            let room = document.getElementById('roomName').value;
+            joinRoom(room);
+        })
+        // document.getElementById('btn_1').addEventListener('click', function () {
+
+
+
+
+        //     async function fetchFile() {
+        //         let data = {
+        //             "action": "testAPI",
+        //             "fileRead": "yes",
+        //             "fileName": "url_json.json"
+        //         };
+        //         var credentials = "alan" + ":" + "aj";
+        //         var encodedCredentials = btoa(credentials);
+
+        //         // const response = await fetch("http://localhost/php_test/file_open.php?orf=1212");
+        //         const response = await fetch("http://localhost:3000/user/1", {
+        //             method: "GET", // or 'PUT'
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 "Authorization": "Basic " + encodedCredentials
+
+        //             },
+        //             // body: JSON.stringify(data),
+        //         });
+        //         const responseDecoded = await response.json();
+        //         // const fileContent = responseDecoded.fileContent;
+        //         // console.log(fileContent.quiqIntegration);
+        //         // // debugger;
+        //         // document.getElementById('response').innerText = responseDecoded.fileContent;
+        //         // console.log(responseDecoded);
+        //     };
+        //     // fetchFile();
+        // })
+    </script>
+
+</body>
+
+</html>

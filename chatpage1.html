@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles for the popup and join room button */
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        #joinRoomForm input,
+        #joinRoomForm button {
+            width: 94%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #joinRoomForm button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #closePopup {
+            background-color: #f44336;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 13%;
+            margin-top: 10px;
+        }
+
+        #openPopup {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .chat-container {
+            width: 80%;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 76vh;
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .chat-input button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .previous-chats {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .previous-chats h3 {
+            margin: 0;
+            padding: 0;
+            color: #007bff;
+        }
+
+        .previous-chats ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .previous-chats li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .previous-chats li:last-child {
+            border-bottom: none;
+        }
+
+        #join_room {
+            width: 100%;
+        }
+
+        .myMsg {
+            margin-left: 91%;
+        }
+
+        .whatsapp-message {
+            background-color: #F3F3F3;
+            color: #0000FF;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .whatsapp-message:hover {
+            background-color: #E0E0E0;
+            /* Slightly darker background on hover */
+            color: #0000FF;
+            /* Keep the text color the same on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2 id="roomJoinmsg">Chat Room</h2>
+        </div>
+        <div class="chat-messages" id="transcript">
+            <!-- Previous messages will be appended here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messagetoSend" placeholder="Type your message...">
+            <button id="send_msg">Send</button>
+        </div>
+        <!-- <div class="previous-chats">
+            <h3>Previous Chats</h3>
+            <ul id="previous-chats-list">
+                
+            </ul>
+        </div> -->
+    </div>
+    <!-- Popup for joining a room -->
+    <div id="joinRoomPopup" class="popup">
+        <div class="popup-content">
+            <h3>Join a Room</h3>
+            <form id="joinRoomForm">
+                <input type="text" id="roomName" placeholder="Enter room ID">
+                <button id="join_room" type="submit">Join</button>
+            </form>
+            <button id="closePopup">Close</button>
+        </div>
+    </div>
+    <!-- Button to open the popup -->
+    <button id="openPopup">Join a Room</button>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
+<script>
+    document.getElementById('messagetoSend').value = "";
+    document.getElementById('transcript').innerHTML = "";
+    document.getElementById('roomName').value = ""
+    var socket;
+    var room;
+    var user_socketID;
+    document.addEventListener('DOMContentLoaded', () => {
+        socket = io('http://localhost:3000');
+        socket.on('connect', (response) => {
+            console.log('Connected to server:', response);
+
+
+            // socket.emit('join room', room);
+            socket.on('message', (room, message, senderID) => {
+                console.log(`Message from ${room}:`, message);
+                let setSenderClass = senderID === user_socketID ? "class='myMsg whatsapp-message'" : "class='whatsapp-message'"
+                document.getElementById('transcript').innerHTML += `<br><span ${setSenderClass}>${message}</span>`
+            });
+
+            // Socket ID of User
+
+            socket.on('socket_id', (socketID) => {
+                if (user_socketID == '' || user_socketID == undefined) {
+                    user_socketID = socketID;
+                }
+
+                console.log('Socket ID:', user_socketID)
+            })
+
+
+
+        });
+    });
+    document.getElementById('send_msg').addEventListener('click', function () {
+        let message = document.getElementById('messagetoSend').value;
+        socket.emit('sendMessageToRoom', room, message, user_socketID, (response) => {
+            // This is the callback function that will be executed when the server sends a response
+            console.log('Server response:', response);
+        });
+        document.getElementById('messagetoSend').value = "";
+    });
+
+
+
+
+    document.getElementById('join_room').addEventListener('click', function () {
+        event.preventDefault();
+
+
+        const joinRoom = (room) => {
+            socket.emit('join room', room);
+            console.log('Joined')
+            document.getElementById('roomJoinmsg').innerText = ''
+            document.getElementById('roomJoinmsg').innerText = `Joined - ${room}`
+            document.getElementById('joinRoomPopup').style.display = 'none';
+            document.getElementById('roomName').value = "";
+        };
+        room = document.getElementById('roomName').value;
+        joinRoom(room);
+
+    })
+    document.getElementById('openPopup').addEventListener('click', function () {
+        document.getElementById('joinRoomPopup').style.display = 'block';
+    });
+
+    document.getElementById('closePopup').addEventListener('click', function () {
+        document.getElementById('joinRoomPopup').style.display = 'none';
+    });
+
+    // document.getElementById('joinRoomForm').addEventListener('submit', function (event) {
+    //     event.preventDefault();
+    //     const roomId = document.getElementById('roomIdInput').value;
+    //     // Here you can add the logic to join the room using the roomId
+    //     console.log('Joining room:', roomId);
+    //     document.getElementById('joinRoomPopup').style.display = 'none';
+    // });
+
+
+</script>
+
+

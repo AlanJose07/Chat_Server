@@ -60,7 +60,7 @@ function dbCall(res, uri) {
 }
 const corsOptions = {
     origin: ['http://example.com', 'http://another-example.com', 'http://127.0.0.1:5501',
-        'http://127.0.0.1:5500', 'http://127.0.0.1:5500/','https://chat-server-3gs8.onrender.com'], // Array of allowed origins
+        'http://127.0.0.1:5500', 'http://127.0.0.1:5500/','https://chat-server-3gs8.onrender.com','http://localhost:3000/socket.io'], // Array of allowed origins
 };
 
 

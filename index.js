@@ -4,6 +4,8 @@ const db = require('./db');
 const cors = require('cors');
 const socketIo = require('socket.io');
 require('custom-env').env('stage');
+const fs = require('fs');
+
 
 console.log(process.env.NODE_ENV)
 
@@ -110,6 +112,18 @@ const chatServer = http.createServer(function (req, res) {
                     console.log('MySQL connection closed.');
                     res.writeHead(200, { 'Content-Type': 'text' });
                     res.end('DB Connection Closed');
+                });
+                break;
+                case 'chatpage1':
+                fs.readFile(__dirname + "/chatpage1.html", function(err, contents) {
+                    if (err) {
+                        res.writeHead(500);
+                        res.end(err);
+                        return;
+                    }
+                    res.setHeader("Content-Type", "text/html");
+                    res.writeHead(200);
+                    res.end(contents);
                 });
                 break;
 

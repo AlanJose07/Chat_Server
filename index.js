@@ -126,6 +126,10 @@ const chatServer = http.createServer(function (req, res) {
                     res.end(contents);
                 });
                 break;
+            default:
+                 res.setHeader("Content-Type", "text/html");
+                 res.writeHead(404);
+                 res.end("<h1>Not Found</h1>");
 
         }
 

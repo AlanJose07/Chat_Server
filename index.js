@@ -26,7 +26,7 @@ const userRooms = new Map();
 
 const allowedOriginList = ['http://localhost:3000',
     'http://localhost:3000', 'http://127.0.0.1:5501/testfile.html',
-    'http://127.0.0.1:5501', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500', 'http://127.0.0.1:5500','https://chat-server-3gs8.onrender.com'
+    'http://127.0.0.1:5501', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500', 'http://127.0.0.1:5500','https://chat-server-3gs8.onrender.com','https://chat-server-dev-pgc6.onrender.com'
 ];
 
 if (process.env.DB_CONNECTION != "OFF") {

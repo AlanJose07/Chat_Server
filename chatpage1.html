@@ -1,293 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat App</title>
     <style>
-        /* Additional styles for the popup and join room button */
-        .popup {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        justify-content: center;
+      }
 
-        .popup-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-        }
+      /* Button at the top */
+      #openPopup {
+        background-color: #2196f3;
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        cursor: pointer;
+        display: block;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+        margin-bottom: 20px; /* Space between button and chat container */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-size: 1.2em;
+      }
 
-        #joinRoomForm input,
-        #joinRoomForm button {
-            width: 94%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+      #openPopup:hover {
+        background-color: #1976d2;
+      }
 
-        #joinRoomForm button {
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-        }
+      .chat-container {
+        width: 90%;
+        max-width: 600px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-        #closePopup {
-            background-color: #f44336;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            width: 13%;
-            margin-top: 10px;
-        }
+      .chat-header {
+        background-color: #2196f3;
+        color: #ffffff;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.5em;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
 
-        #openPopup {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+      .chat-messages {
+        flex-grow: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: #f0f4f8;
+        border-top: 1px solid #e0e0e0;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
+      .chat-input {
+        display: flex;
+        padding: 10px;
+        background-color: #ffffff;
+        border-top: 1px solid #ddd;
+        box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+      }
 
-        .chat-container {
-            width: 80%;
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            height: 76vh;
-        }
+      .chat-input input {
+        flex-grow: 1;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 20px;
+        margin-right: 10px;
+        transition: border-color 0.3s;
+        font-size: 1em;
+        outline: none;
+      }
 
-        .chat-header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-        }
+      .chat-input input:focus {
+        border-color: #2196f3;
+      }
 
-        .chat-messages {
-            flex-grow: 1;
-            padding: 10px;
-            overflow-y: auto;
-            border-bottom: 1px solid #ddd;
-        }
+      .chat-input button {
+        background-color: #2196f3;
+        color: #ffffff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 1em;
+      }
 
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #ddd;
-        }
+      .chat-input button:hover {
+        background-color: #1976d2;
+      }
 
-        .chat-input input {
-            flex-grow: 1;
-            border: none;
-            padding: 5px;
-            border-radius: 5px;
-        }
+      .chat-message {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        position: relative;
+      }
 
-        .chat-input button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            margin-left: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+      .message-bubble {
+        padding: 12px 18px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        max-width: 75%;
+        position: relative;
+        transition: all 0.3s;
+        word-wrap: break-word;
+      }
 
-        .previous-chats {
-            padding: 10px;
-            border-top: 1px solid #ddd;
-        }
+      .message-sent {
+        margin-left: auto;
+        background-color: #2196f3;
+        color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
 
-        .previous-chats h3 {
-            margin: 0;
-            padding: 0;
-            color: #007bff;
-        }
+      .message-received {
+        background-color: #e1f5fe;
+        color: black;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
 
-        .previous-chats ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
+      .timestamp {
+        font-size: 0.7em;
+        color: gray;
+        margin-left: 10px;
+        align-self: flex-end;
+      }
 
-        .previous-chats li {
-            padding: 5px 0;
-            border-bottom: 1px solid #ddd;
-        }
+      /* Popup Styles */
+      .popup {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
 
-        .previous-chats li:last-child {
-            border-bottom: none;
-        }
+      .popup-content {
+        background-color: #ffffff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        width: 80%;
+        max-width: 400px;
+        position: relative;
+        transition: transform 0.3s ease-in-out;
+        transform: scale(0);
+        opacity: 0;
+      }
 
-        #join_room {
-            width: 100%;
-        }
+      .popup-content.show {
+        transform: scale(1);
+        opacity: 1;
+      }
 
-        .myMsg {
-            margin-left: 91%;
-        }
+      .popup-header {
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+        color: #2196f3;
+        border-bottom: 2px solid #f0f4f8;
+        padding-bottom: 10px;
+      }
 
-        .whatsapp-message {
-            background-color: #F3F3F3;
-            color: #0000FF;
-            padding: 10px;
-            border-radius: 10px;
-            display: inline-block;
-            cursor: pointer;
-            margin-top: 8px;
-        }
+      #joinRoomForm input,
+      #joinRoomForm button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+      }
 
-        .whatsapp-message:hover {
-            background-color: #E0E0E0;
-            /* Slightly darker background on hover */
-            color: #0000FF;
-            /* Keep the text color the same on hover */
-        }
+      #joinRoomForm input:focus {
+        border-color: #2196f3;
+      }
+
+      #joinRoomForm button {
+        background-color: #2196f3;
+        color: #ffffff;
+      }
+
+      #joinRoomForm button:hover {
+        background-color: #1976d2;
+      }
+
+      #closePopup {
+        background-color: #f44336;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+      }
+
+      #closePopup:hover {
+        background-color: #d32f2f;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
+    <button id="openPopup">Join a Room</button>
     <div class="chat-container">
-        <div class="chat-header">
-            <h2 id="roomJoinmsg">Chat Room</h2>
-        </div>
-        <div class="chat-messages" id="transcript">
-            <!-- Previous messages will be appended here -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="messagetoSend" placeholder="Type your message...">
-            <button id="send_msg">Send</button>
-        </div>
-        <!-- <div class="previous-chats">
-            <h3>Previous Chats</h3>
-            <ul id="previous-chats-list">
-                
-            </ul>
-        </div> -->
+      <div class="chat-header">
+        <h2 id="roomJoinmsg">Chat Room</h2>
+      </div>
+      <div class="chat-messages" id="transcript">
+        <!-- Previous messages will be appended here -->
+      </div>
+      <div class="chat-input">
+        <input
+          type="text"
+          id="messagetoSend"
+          placeholder="Type your message..."
+        />
+        <button id="send_msg">Send</button>
+      </div>
     </div>
+
     <!-- Popup for joining a room -->
     <div id="joinRoomPopup" class="popup">
-        <div class="popup-content">
-            <h3>Join a Room</h3>
-            <form id="joinRoomForm">
-                <input type="text" id="roomName" placeholder="Enter room ID">
-                <button id="join_room" type="submit">Join</button>
-            </form>
-            <button id="closePopup">Close</button>
-        </div>
+      <div class="popup-content">
+        <div class="popup-header">Join a Room</div>
+        <form id="joinRoomForm">
+          <input
+            type="text"
+            id="roomName"
+            placeholder="Enter room ID"
+            required
+          />
+          <button id="join_room" type="submit">Join</button>
+        </form>
+        <button id="closePopup">Close</button>
+      </div>
     </div>
-    <!-- Button to open the popup -->
-    <button id="openPopup">Join a Room</button>
+
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-</body>
 
+    <script>
+      document.getElementById("messagetoSend").value = "";
+      document.getElementById("transcript").innerHTML = "";
+      document.getElementById("roomName").value = "";
+      var socket;
+      var room;
+      var user_socketID;
+      document.addEventListener("DOMContentLoaded", () => {
+        socket = io("https://chat-server-dev-pgc6.onrender.com");
+        socket.on("connect", (response) => {
+          console.log("Connected to server:", response);
+
+          socket.on("message", (room, message, senderID) => {
+            console.log(`Message from ${room}:`, message);
+            let setSenderClass =
+              senderID === user_socketID
+                ? "class='chat-message message-sent'"
+                : "class='chat-message message-received'";
+            const timestamp = new Date().toLocaleTimeString().slice(0, 5);
+            document.getElementById(
+              "transcript"
+            ).innerHTML += `<div ${setSenderClass}><div class="message-bubble">${message}</div><span class="timestamp">${timestamp}</span></div>`;
+          });
+
+          socket.on("socket_id", (socketID) => {
+            if (!user_socketID) {
+              user_socketID = socketID;
+            }
+            console.log("Socket ID:", user_socketID);
+          });
+        });
+      });
+
+      document
+        .getElementById("send_msg")
+        .addEventListener("click", function () {
+          let message = document.getElementById("messagetoSend").value;
+          socket.emit(
+            "sendMessageToRoom",
+            room,
+            message,
+            user_socketID,
+            (response) => {
+              console.log("Server response:", response);
+            }
+          );
+          document.getElementById("messagetoSend").value = "";
+        });
+
+      document
+        .getElementById("join_room")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          const joinRoom = (room) => {
+            socket.emit("join room", room);
+            console.log("Joined");
+            document.getElementById(
+              "roomJoinmsg"
+            ).innerText = `Joined - ${room}`;
+            document.getElementById("joinRoomPopup").style.display = "none";
+            document.getElementById("roomName").value = "";
+          };
+          room = document.getElementById("roomName").value;
+          joinRoom(room);
+        });
+
+      document
+        .getElementById("openPopup")
+        .addEventListener("click", function () {
+          document.getElementById("joinRoomPopup").style.display = "block";
+          setTimeout(() => {
+            document.querySelector(".popup-content").classList.add("show");
+          }, 10);
+        });
+
+      document
+        .getElementById("closePopup")
+        .addEventListener("click", function () {
+          document.getElementById("joinRoomPopup").style.display = "none";
+          document.querySelector(".popup-content").classList.remove("show");
+        });
+    </script>
+  </body>
 </html>
-<script>
-    document.getElementById('messagetoSend').value = "";
-    document.getElementById('transcript').innerHTML = "";
-    document.getElementById('roomName').value = ""
-    var socket;
-    var room;
-    var user_socketID;
-    document.addEventListener('DOMContentLoaded', () => {
-        socket = io('https://chat-server-dev-pgc6.onrender.com');
-        socket.on('connect', (response) => {
-            console.log('Connected to server:', response);
-
-
-            // socket.emit('join room', room);
-            socket.on('message', (room, message, senderID) => {
-                console.log(`Message from ${room}:`, message);
-                let setSenderClass = senderID === user_socketID ? "class='myMsg whatsapp-message'" : "class='whatsapp-message'"
-                document.getElementById('transcript').innerHTML += `<br><span ${setSenderClass}>${message}</span>`
-            });
-
-            // Socket ID of User
-
-            socket.on('socket_id', (socketID) => {
-                if (user_socketID == '' || user_socketID == undefined) {
-                    user_socketID = socketID;
-                }
-
-                console.log('Socket ID:', user_socketID)
-            })
-
-
-
-        });
-    });
-    document.getElementById('send_msg').addEventListener('click', function () {
-        let message = document.getElementById('messagetoSend').value;
-        socket.emit('sendMessageToRoom', room, message, user_socketID, (response) => {
-            // This is the callback function that will be executed when the server sends a response
-            console.log('Server response:', response);
-        });
-        document.getElementById('messagetoSend').value = "";
-    });
-
-
-
-
-    document.getElementById('join_room').addEventListener('click', function () {
-        event.preventDefault();
-
-
-        const joinRoom = (room) => {
-            socket.emit('join room', room);
-            console.log('Joined')
-            document.getElementById('roomJoinmsg').innerText = ''
-            document.getElementById('roomJoinmsg').innerText = `Joined - ${room}`
-            document.getElementById('joinRoomPopup').style.display = 'none';
-            document.getElementById('roomName').value = "";
-        };
-        room = document.getElementById('roomName').value;
-        joinRoom(room);
-
-    })
-    document.getElementById('openPopup').addEventListener('click', function () {
-        document.getElementById('joinRoomPopup').style.display = 'block';
-    });
-
-    document.getElementById('closePopup').addEventListener('click', function () {
-        document.getElementById('joinRoomPopup').style.display = 'none';
-    });
-
-    // document.getElementById('joinRoomForm').addEventListener('submit', function (event) {
-    //     event.preventDefault();
-    //     const roomId = document.getElementById('roomIdInput').value;
-    //     // Here you can add the logic to join the room using the roomId
-    //     console.log('Joining room:', roomId);
-    //     document.getElementById('joinRoomPopup').style.display = 'none';
-    // });
-
-
-</script>
-
-

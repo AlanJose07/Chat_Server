@@ -67,6 +67,7 @@
                     <td><%= room.messageCount %></td>
                     <td>
                         <button class="view-messages" data-room="<%= room.room %>">View Messages</button>
+                        <button class="view-users" data-room="<%= room.room %>">View Users</button>
                     </td>
                 </tr>
                 <% }) %>
@@ -77,14 +78,17 @@
             <h2>Message Details</h2>
             <div id="messagesContent"></div>
         </div>
+
+        <div id="userDetails" class="details" style="display: none">
+            <h2>User Details</h2>
+            <div id="usersContent"></div>
+        </div>
     </div>
 
     <script>
         const roomsData = <%- JSON.stringify(roomsData) %>; // Pass the rooms data to the frontend
 
         function showMessages(room) {
-          console.log("Room:",room);
-          console.log( roomsData);
             const messages = roomsData[room].messages;
             let messageHTML = '<ul>';
             messages.forEach(msg => {
@@ -94,12 +98,32 @@
 
             document.getElementById('messagesContent').innerHTML = messageHTML;
             document.getElementById('messageDetails').style.display = 'block';
+            document.getElementById('userDetails').style.display = 'none'; // Hide user details
+        }
+
+        function showUsers(room) {
+            const users = Array.from(roomsData[room].users); // Assuming users are stored in a Set or array
+            let userHTML = '<ul>';
+            users.forEach(user => {
+                userHTML += `<li>${user}</li>`;
+            });
+            userHTML += '</ul>';
+
+            document.getElementById('usersContent').innerHTML = userHTML;
+            document.getElementById('userDetails').style.display = 'block';
+            document.getElementById('messageDetails').style.display = 'none'; // Hide message details
         }
 
         // Attach event listeners to buttons
         document.querySelectorAll('.view-messages').forEach(button => {
             button.addEventListener('click', function() {
                 showMessages(this.getAttribute('data-room'));
+            });
+        });
+
+        document.querySelectorAll('.view-users').forEach(button => {
+            button.addEventListener('click', function() {
+                showUsers(this.getAttribute('data-room'));
             });
         });
     </script>

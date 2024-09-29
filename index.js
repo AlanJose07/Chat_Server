@@ -92,7 +92,7 @@ const chatServer = http.createServer(function (req, res) {
                         messageCount: data.messages.length,
                     }));
                     // Render the EJS template
-                    ejs.renderFile(path.join(__dirname, 'views', 'admin.ejs'), { rooms: roomStats }, (err, html) => {
+                    ejs.renderFile(path.join(__dirname, 'views', 'admin.ejs'), { rooms: roomStats, roomsData }, (err, html) => {
                         if (err) {
                             console.error('EJS Render Error:', err); // Log the error for debugging
                             res.writeHead(500);

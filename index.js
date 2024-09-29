@@ -206,8 +206,8 @@ io.on('connection', (socket) => {
             roomsData[room].users.delete(socket.id);
         }
     });
-    socket.on('send image', (imageBuffer) => {
-        socket.broadcast.emit('receive image', imageBuffer);
+    socket.on('send image', (imageBuffer,room, senderID, senderUsername) => {
+        io.to(room).emit('receive image', imageBuffer, senderID, senderUsername);
     });
 
     // Updated sendMessageToRoom event to include username

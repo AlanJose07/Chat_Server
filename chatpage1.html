@@ -687,20 +687,26 @@
         // messageDiv.classList.add('message', type);
 
         if (isImage) {
+          // Create an image element
           const img = document.createElement("img");
-          img.src = content;
-          messageDiv.appendChild(img);
-        } else {
-          messageDiv.textContent = content;
+          img.src = content; // Assuming 'content' is the image URL
+          img.alt = "User Image"; // Add an alt attribute for accessibility
+          img.style.maxWidth = "100%"; // Optional: Ensure the image fits within the message body
+
+          // Create a message div to hold the image
+          const messageDiv = document.createElement("div");
+          messageDiv.appendChild(img); // Append the image to the messageDiv
+
+          // Append the messageDiv to the transcript
+          document.getElementById("transcript").innerHTML += `
+          <div class="${messageClass}">
+              <div class="message-header">
+                  <span class="${senderHighlight}">${senderName}</span>
+                  <span class="timestamp">${timestamp}</span>
+              </div>
+              <div class="message-body">${messageDiv.outerHTML}</div>
+          </div>`;
         }
-        document.getElementById("transcript").innerHTML += `
-            <div class="${messageClass}">
-                <div class="message-header">
-                    <span class="${senderHighlight}">${senderName}</span>
-                    <span class="timestamp">${timestamp}</span>
-                </div>
-                <div class="message-body">${messageDiv}</div>
-            </div>`;
       }
     </script>
   </body>

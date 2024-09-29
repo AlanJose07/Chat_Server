@@ -80,7 +80,7 @@
     </div>
 
     <script>
-        const roomsData = <%= JSON.stringify(roomsData) %>; // Pass the rooms data to the frontend
+        const roomsData = <%- JSON.stringify(roomsData) %>; // Pass the rooms data to the frontend
 
         function showMessages(room) {
           console.log("Room:",room);

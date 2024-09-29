@@ -94,8 +94,9 @@ const chatServer = http.createServer(function (req, res) {
                     // Render the EJS template
                     ejs.renderFile(path.join(__dirname, 'views', 'admin.ejs'), { rooms: roomStats }, (err, html) => {
                         if (err) {
+                            console.error('EJS Render Error:', err); // Log the error for debugging
                             res.writeHead(500);
-                            res.end('Error rendering the admin page');
+                            res.end(`Error rendering the admin page: ${err.message}`);
                         } else {
                             res.writeHead(200, { 'Content-Type': 'text/html' });
                             res.end(html);

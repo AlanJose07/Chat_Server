@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Chat App</title>
     <style>
       body {
@@ -27,9 +28,10 @@
         display: block;
         border-radius: 20px;
         transition: background-color 0.3s;
-            margin-bottom: 20px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         font-size: 1.2em;
+        height: fit-content;
       }
 
       #openPopup:hover {
@@ -54,6 +56,8 @@
         text-align: center;
         font-size: 1.5em;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: row;
       }
 
       .chat-messages {
@@ -62,6 +66,7 @@
         overflow-y: auto;
         background-color: #f0f4f8;
         border-top: 1px solid #e0e0e0;
+        max-height: 422px;
       }
 
       .chat-input {
@@ -120,8 +125,8 @@
 
       .message-sent {
         margin-left: auto;
-        background-color: #2196f3;
-        color: white;
+        background-color: #2196f373;
+        /* color: white; */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       }
 
@@ -132,16 +137,17 @@
       }
 
       .timestamp {
-        font-size: 0.7em;
-        color: gray;
-        margin-left: 10px;
-        align-self: flex-end;
+        color: #060606;
+        font-size: 0.85em;
+        background-color: whitesmoke;
+        border-radius: 14px;
+        padding: 2px;
       }
 
-        .me {
-            font-weight: bold;
-            color: #2196f3;
-        }
+      .me {
+        font-weight: bold;
+        color: #2196f3;
+      }
 
       /* Popup Styles */
       .popup {
@@ -184,7 +190,6 @@
         padding-bottom: 10px;
       }
 
-      #joinRoomForm input,
       #joinRoomForm button {
         width: 100%;
         padding: 10px;
@@ -208,7 +213,7 @@
       }
 
       #closePopup {
-        background-color: #f44336;
+        background-color: #f44336 !important;
         color: #fff;
         border: none;
         cursor: pointer;
@@ -222,34 +227,228 @@
       #closePopup:hover {
         background-color: #d32f2f;
       }
+      .join-pop-up-UserInput {
+        width: -moz-available !important;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+      }
+      .join_room_pop_action_container {
+        display: flex;
+        flex-direction: row;
+      }
+      .avatar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 12px; /* Rounded corners */
+        padding: 10px;
+        background-color: #ffffff; /* White background for the avatar container */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        height: fit-content;
+      }
+
+      .avatar:hover {
+        transform: translateY(-5px); /* Slight lift on hover */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+      }
+
+      .avatar-icon {
+        width: 70px; /* Size of the avatar */
+        height: 70px;
+        background: linear-gradient(
+          45deg,
+          #00796b,
+          #004d40
+        ); /* Professional gradient */
+        border-radius: 50%; /* Circular avatar */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 1.8em; /* Larger font for initials */
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+      }
+
+      .username {
+        margin-top: 10px;
+        font-size: 1.1em; /* Slightly larger font */
+        text-align: center;
+        color: #333; /* Dark text color */
+        font-weight: 600; /* Medium weight for emphasis */
+        text-transform: capitalize; /* Capitalize username */
+      }
+      .chatPageContainer {
+        width: 100%;
+        height: 100%;
+      }
+      .firstSubContainer {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      .tab-heading {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #444;
+        position: relative;
+        padding: 10px 0;
+        cursor: pointer;
+      }
+
+      .tab-heading::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: #ff5722; /* Accent color */
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .tab-heading:hover::after {
+        transform: scaleX(1); /* Show underline on hover */
+      }
+      .notification {
+        display: none;
+        position: fixed;
+        /* top: 20px; */
+        /* Adjust to position it from the top */
+        bottom: 20px;
+        right: 20px;
+        padding: 16px;
+        border-radius: 6px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .notification.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .notification.success {
+        background-color: #4caf50;
+        /* Green */
+      }
+
+      .notification.failure {
+        background-color: #f44336;
+        /* Red */
+      }
+
+      .message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        position: relative;
+      }
+
+      .message-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .sender {
+        color: #f32121; /* Blue for sender name */
+      }
+      .senderOthers {
+        color: #1976d2;
+      }
+
+      .message-body {
+        padding: 10px;
+        background-color: #e1f5fe; /* Light blue background */
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .message-received {
+        background-color: #d1e7dd; /* Light green for received message */
+      }
+
+      .message-received .message-body {
+        background-color: #f8f9fa; /* Slightly darker for received */
+      }
     </style>
   </head>
 
   <body>
-    <button id="openPopup">Join a Room</button>
-    <div class="chat-container">
-      <div class="chat-header">
-        <h2 id="roomJoinmsg">Chat Room</h2>
-      </div>
-      <div class="chat-messages" id="transcript">
-        <!-- Previous messages will be appended here -->
-      </div>
-      <div class="chat-input">
-            <input type="text" id="usernameInput" placeholder="Enter your username..." />
-            <input type="text" id="messagetoSend" placeholder="Type your message..." />
-        <button id="send_msg">Send</button>
+    <div id="notification" class="notification"></div>
+    <div class="chatPageContainer">
+      <div class="firstSubContainer">
+        <div class="avatar">
+          <div class="avatar-icon">
+            <span id="userDisplayName" class="initials">NA</span>
+            <!-- Replace with user's initials -->
+          </div>
+          <div id="userNameForChat" class="username">UnKnown</div>
+        </div>
+
+        <div class="chat-container">
+          <div class="chat-header">
+            <div id="roomJoinmsg" class="tab-heading">Chat Room</div>
+          </div>
+          <div class="chat-messages" id="transcript">
+            <!-- Previous messages will be appended here -->
+          </div>
+          <div class="chat-input">
+            <input
+              type="text"
+              id="messagetoSend"
+              placeholder="Type your message..."
+            />
+            <button id="send_msg">Send</button>
+          </div>
+        </div>
+        <button id="openPopup">Join Room</button>
       </div>
     </div>
 
     <!-- Popup for joining a room -->
     <div id="joinRoomPopup" class="popup">
       <div class="popup-content">
-        <div class="popup-header">Join a Room</div>
+        <div class="popup-header">Join Room</div>
         <form id="joinRoomForm">
-                <input type="text" id="roomName" placeholder="Enter room ID" required />
-          <button id="join_room" type="submit">Join</button>
+          <input
+            type="text"
+            id="roomName"
+            class="join-pop-up-UserInput"
+            placeholder="Enter room ID"
+            required
+          />
+          <input
+            type="text"
+            id="usernameInput"
+            class="join-pop-up-UserInput"
+            placeholder="Enter your username..."
+          />
+          <input
+            type="text"
+            id="user_displayName"
+            class="join-pop-up-UserInput"
+            placeholder="Enter DisplayName..."
+          />
+          <div class="join_room_pop_action_container">
+            <button id="join_room" type="submit">Join</button>
+            <button id="closePopup">Close</button>
+          </div>
         </form>
-        <button id="closePopup">Close</button>
       </div>
     </div>
 
@@ -260,10 +459,10 @@
       document.getElementById("transcript").innerHTML = "";
       document.getElementById("roomName").value = "";
       var socket;
-      var room;
+      var room = "";
       var user_socketID;
-        var username;
-        var isUsernameSet = false; // Track if the username has been set
+      var username;
+      var isUsernameSet = false; // Track if the username has been set
 
       document.addEventListener("DOMContentLoaded", () => {
         socket = io("https://chat-server-dev-pgc6.onrender.com", {
@@ -274,16 +473,44 @@
         socket.on("connect", (response) => {
           console.log("Connected to server:", response);
 
-                socket.on("message", (room, message, senderID, senderUsername) => {
-            console.log(`Message from ${room}:`, message);
-            let setSenderClass =
+          socket.on("message", (room, message, senderID, senderUsername) => {
+            console.log(`Message from ${room}:`, message, "--", senderUsername);
+
+            // Determine the message class based on sender ID
+            let messageClass =
               senderID === user_socketID
-                ? "class='chat-message message-sent'"
-                : "class='chat-message message-received'";
-            const timestamp = new Date().toLocaleTimeString().slice(0, 5);
-                    const senderName = senderID === user_socketID ? "me" : senderUsername;
-                    document.getElementById("transcript").innerHTML += `<div ${setSenderClass}><div class="message-bubble">${senderName}: ${message}</div><span class="timestamp">${timestamp}</span></div>`;
+                ? "message message-sent"
+                : "message message-received";
+
+            const now = new Date();
+            const options = {
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
+              hour12: true,
+            };
+            const timestamp = now.toLocaleTimeString("en-US", options);
+
+            const senderName =
+              senderID === user_socketID ? "me" : senderUsername;
+
+            const senderHighlight =
+              senderID === user_socketID ? "sender" : "senderOthers";
+
+            // Append the new message structure to the transcript
+            document.getElementById("transcript").innerHTML += `
+        <div class="${messageClass}">
+            <div class="message-header">
+                <span class="${senderHighlight}">${senderName}</span>
+                <span class="timestamp">${timestamp}</span>
+            </div>
+            <div class="message-body">${message}</div>
+        </div>`;
           });
+          setTimeout(() => {
+            const transcript = document.getElementById("transcript");
+            transcript.scrollTop = transcript.scrollHeight;
+          }, 100);
 
           socket.on("socket_id", (socketID) => {
             if (!user_socketID) {
@@ -294,50 +521,128 @@
         });
       });
 
-        document.getElementById("send_msg").addEventListener("click", function () {
-            if (!isUsernameSet) {
-                alert("Please set a username before sending messages.");
-                return;
-            }
+      document
+        .getElementById("messagetoSend")
+        .addEventListener("keydown", function (event) {
+          // Check if the pressed key is Enter
+          if (event.key === "Enter") {
+            // Prevent the default action (optional, based on your requirement)
+            event.preventDefault();
             let message = document.getElementById("messagetoSend").value;
-            socket.emit("sendMessageToRoom", room, message, user_socketID, username, (response) => {
+            socket.emit(
+              "sendMessageToRoom",
+              room,
+              message,
+              user_socketID,
+              username,
+              (response) => {
+                console.log("Server response:", response);
+              }
+            );
+            document.getElementById("messagetoSend").value = "";
+          }
+        });
+
+      document
+        .getElementById("send_msg")
+        .addEventListener("click", function () {
+          let message = document.getElementById("messagetoSend").value;
+          socket.emit(
+            "sendMessageToRoom",
+            room,
+            message,
+            user_socketID,
+            username,
+            (response) => {
               console.log("Server response:", response);
-            });
+            }
+          );
           document.getElementById("messagetoSend").value = "";
         });
 
-        document.getElementById("join_room").addEventListener("click", function (event) {
+      document
+        .getElementById("join_room")
+        .addEventListener("click", function (event) {
           event.preventDefault();
+          let roomIDFromUser = document.getElementById("roomName").value;
+          let userDisplayName =
+            document.getElementById("user_displayName").value;
+          username = document.getElementById("usernameInput").value;
+          let err = 0;
+          if (roomIDFromUser.length == 0) {
+            err = err + 1;
+          }
+          if (userDisplayName.length == 0) {
+            err = err + 1;
+          }
+          if (username.length == 0) {
+            err = err + 1;
+          }
+          if (err > 0) {
+            showNotification("failure", `Please Fill All Mandatory Field`);
+            return;
+          }
           const joinRoom = (room) => {
             socket.emit("join room", room);
             console.log("Joined");
-                document.getElementById("roomJoinmsg").innerText = `Joined - ${room}`;
+            document.getElementById("roomJoinmsg").innerText = `${room}`;
+            showNotification("success", `Joined Room ${room}`);
+            // success
+            // document.getElementById('openPopup').disabled=true;
             document.getElementById("joinRoomPopup").style.display = "none";
             document.getElementById("roomName").value = "";
+
+            document.getElementById("userNameForChat").innerText = username;
+            document.getElementById("userDisplayName").innerText =
+              userDisplayName;
+            isUsernameSet = true; // Mark the username as set
+            document.getElementById("usernameInput").value = ""; // Clear the input field
+            document.getElementById("user_displayName").value = "";
           };
 
-          room = document.getElementById("roomName").value;
+          room = roomIDFromUser;
           joinRoom(room);
         });
 
-        document.getElementById("openPopup").addEventListener("click", function () {
+      document
+        .getElementById("openPopup")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          if (room != "") {
+            showNotification("failure", `Already Join A Room: ${room}`);
+            return;
+          }
           document.getElementById("joinRoomPopup").style.display = "block";
           setTimeout(() => {
             document.querySelector(".popup-content").classList.add("show");
           }, 10);
         });
 
-        document.getElementById("closePopup").addEventListener("click", function () {
+      document
+        .getElementById("closePopup")
+        .addEventListener("click", function () {
           document.getElementById("joinRoomPopup").style.display = "none";
           document.querySelector(".popup-content").classList.remove("show");
         });
 
-        // Add an event listener to set the username on first message
-        document.getElementById("usernameInput").addEventListener("change", function () {
-            username = this.value || "Anonymous"; // Default to "Anonymous"
-            isUsernameSet = true; // Mark the username as set
-            this.value = ""; // Clear the input field
-        });
+      // Add an event listener to set the username on first message
+      // document.getElementById("usernameInput").addEventListener("change", function () {
+      //     username = this.value || "Anonymous"; // Default to "Anonymous"
+      //     isUsernameSet = true; // Mark the username as set
+      //     this.value = ""; // Clear the input field
+      // });
+
+      function showNotification(type, message) {
+        var $notification = $("#notification");
+        $notification.text(message);
+        $notification
+          .removeClass("success failure")
+          .addClass(type)
+          .addClass("show");
+        setTimeout(function () {
+          $notification.removeClass("show");
+        }, 3000);
+      }
     </script>
   </body>
 </html>

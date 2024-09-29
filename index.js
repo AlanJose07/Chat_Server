@@ -209,13 +209,23 @@ io.on('connection', (socket) => {
 
     // Updated sendMessageToRoom event to include username
     socket.on('sendMessageToRoom', (room, message, user_socketID, username) => {
-        // Save the message
-        if (roomsData[room]) {
-            roomsData[room].messages.push({ user_socketID, username, message });
+        // Check if the room exists in roomsData
+        if (!roomsData[room]) {
+            // If it doesn't exist, initialize it
+            roomsData[room] = {
+                users: new Set(),
+                messages: []
+            };
         }
+
+        // Save the message
+        roomsData[room].messages.push({ user_socketID, username, message });
+
+        // Emit the message to the room
         io.to(room).emit('message', room, message, user_socketID, username);
         console.log(`${room}:-Message: ${message}:-User:`, user_socketID, `:-Username:`, username);
     });
+
 });
 
 instrument(io, { auth: false })

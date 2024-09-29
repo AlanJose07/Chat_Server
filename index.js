@@ -160,25 +160,22 @@ io.on('connection', (socket) => {
     socket.on('join room', (room) => {
         socket.join(room);
         io.to(room).emit('socket_id', socket.id);
-        console.log(`User Joined room1 : ${room}`);
+        console.log(`User Joined room: ${room}`);
         userRooms.set(socket.id, room, socket);
-        console.log("Users List:", userRooms)
+        console.log("Users List:", userRooms);
         console.log("-----------------------------------------------------------");
-        // console.log(socket)
     });
 
     socket.on('leave room', (room) => {
         socket.leave(room);
         console.log(`User Left room: ${room}`);
     });
-    // socket.on('message', (message) => {
-    //     console.log('Message from room:', message);
-    // });
-    socket.on('sendMessageToRoom', (room, message, user_socketID) => {
-        // var res.room = room;
 
-        io.to(room).emit('message', room, message, user_socketID);
-        console.log(`${room}:-Message: ${message}:-User:`, user_socketID)
+    // Updated sendMessageToRoom event to include username
+    socket.on('sendMessageToRoom', (room, message, user_socketID, username) => {
+        // Emit the message along with the room, user_socketID, and username
+        io.to(room).emit('message', room, message, user_socketID, username);
+        console.log(`${room}:-Message: ${message}:-User:`, user_socketID, `:-Username:`, username);
     });
 });
 

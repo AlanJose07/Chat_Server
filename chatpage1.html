@@ -27,7 +27,7 @@
         display: block;
         border-radius: 20px;
         transition: background-color 0.3s;
-        margin-bottom: 20px; /* Space between button and chat container */
+            margin-bottom: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         font-size: 1.2em;
       }
@@ -106,7 +106,6 @@
         display: flex;
         align-items: center;
         margin: 10px 0;
-        position: relative;
       }
 
       .message-bubble {
@@ -138,6 +137,11 @@
         margin-left: 10px;
         align-self: flex-end;
       }
+
+        .me {
+            font-weight: bold;
+            color: #2196f3;
+        }
 
       /* Popup Styles */
       .popup {
@@ -231,11 +235,8 @@
         <!-- Previous messages will be appended here -->
       </div>
       <div class="chat-input">
-        <input
-          type="text"
-          id="messagetoSend"
-          placeholder="Type your message..."
-        />
+            <input type="text" id="usernameInput" placeholder="Enter your username..." />
+            <input type="text" id="messagetoSend" placeholder="Type your message..." />
         <button id="send_msg">Send</button>
       </div>
     </div>
@@ -245,12 +246,7 @@
       <div class="popup-content">
         <div class="popup-header">Join a Room</div>
         <form id="joinRoomForm">
-          <input
-            type="text"
-            id="roomName"
-            placeholder="Enter room ID"
-            required
-          />
+                <input type="text" id="roomName" placeholder="Enter room ID" required />
           <button id="join_room" type="submit">Join</button>
         </form>
         <button id="closePopup">Close</button>
@@ -266,21 +262,27 @@
       var socket;
       var room;
       var user_socketID;
+        var username;
+        var isUsernameSet = false; // Track if the username has been set
+
       document.addEventListener("DOMContentLoaded", () => {
-        socket = io("https://chat-server-dev-pgc6.onrender.com");
+        socket = io("https://chat-server-dev-pgc6.onrender.com", {
+          reconnectionAttempts: 5, // Number of reconnection attempts before giving up
+          reconnectionDelay: 1000, // Delay in milliseconds before the next attempt
+          reconnectionDelayMax: 5000, // Maximum delay between attempts
+        });
         socket.on("connect", (response) => {
           console.log("Connected to server:", response);
 
-          socket.on("message", (room, message, senderID) => {
+                socket.on("message", (room, message, senderID, senderUsername) => {
             console.log(`Message from ${room}:`, message);
             let setSenderClass =
               senderID === user_socketID
                 ? "class='chat-message message-sent'"
                 : "class='chat-message message-received'";
             const timestamp = new Date().toLocaleTimeString().slice(0, 5);
-            document.getElementById(
-              "transcript"
-            ).innerHTML += `<div ${setSenderClass}><div class="message-bubble">${message}</div><span class="timestamp">${timestamp}</span></div>`;
+                    const senderName = senderID === user_socketID ? "me" : senderUsername;
+                    document.getElementById("transcript").innerHTML += `<div ${setSenderClass}><div class="message-bubble">${senderName}: ${message}</div><span class="timestamp">${timestamp}</span></div>`;
           });
 
           socket.on("socket_id", (socketID) => {
@@ -292,53 +294,49 @@
         });
       });
 
-      document
-        .getElementById("send_msg")
-        .addEventListener("click", function () {
-          let message = document.getElementById("messagetoSend").value;
-          socket.emit(
-            "sendMessageToRoom",
-            room,
-            message,
-            user_socketID,
-            (response) => {
-              console.log("Server response:", response);
+        document.getElementById("send_msg").addEventListener("click", function () {
+            if (!isUsernameSet) {
+                alert("Please set a username before sending messages.");
+                return;
             }
-          );
+            let message = document.getElementById("messagetoSend").value;
+            socket.emit("sendMessageToRoom", room, message, user_socketID, username, (response) => {
+              console.log("Server response:", response);
+            });
           document.getElementById("messagetoSend").value = "";
         });
 
-      document
-        .getElementById("join_room")
-        .addEventListener("click", function (event) {
+        document.getElementById("join_room").addEventListener("click", function (event) {
           event.preventDefault();
           const joinRoom = (room) => {
             socket.emit("join room", room);
             console.log("Joined");
-            document.getElementById(
-              "roomJoinmsg"
-            ).innerText = `Joined - ${room}`;
+                document.getElementById("roomJoinmsg").innerText = `Joined - ${room}`;
             document.getElementById("joinRoomPopup").style.display = "none";
             document.getElementById("roomName").value = "";
           };
+
           room = document.getElementById("roomName").value;
           joinRoom(room);
         });
 
-      document
-        .getElementById("openPopup")
-        .addEventListener("click", function () {
+        document.getElementById("openPopup").addEventListener("click", function () {
           document.getElementById("joinRoomPopup").style.display = "block";
           setTimeout(() => {
             document.querySelector(".popup-content").classList.add("show");
           }, 10);
         });
 
-      document
-        .getElementById("closePopup")
-        .addEventListener("click", function () {
+        document.getElementById("closePopup").addEventListener("click", function () {
           document.getElementById("joinRoomPopup").style.display = "none";
           document.querySelector(".popup-content").classList.remove("show");
+        });
+
+        // Add an event listener to set the username on first message
+        document.getElementById("usernameInput").addEventListener("change", function () {
+            username = this.value || "Anonymous"; // Default to "Anonymous"
+            isUsernameSet = true; // Mark the username as set
+            this.value = ""; // Clear the input field
         });
     </script>
   </body>

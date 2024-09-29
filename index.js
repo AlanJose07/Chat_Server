@@ -148,7 +148,7 @@ const chatServer = http.createServer(function (req, res) {
 // Socket Connection
 const io = socketIo(chatServer, {
     cors: {
-        origin: "*", // Allow all origins, or specify a list of allowed origins
+        origin: corsOptions.origin, // Allow all origins, or specify a list of allowed origins
         methods: ["GET", "POST", "OPTIONS"], // Allowed methods
         allowedHeaders: ["my-custom-header"], // Allowed headers
         credentials: true, // Allow credentials

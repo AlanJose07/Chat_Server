@@ -505,8 +505,8 @@
           reconnectionDelayMax: 5000, // Maximum delay between attempts
         });
 
-        socket.on("receive image", (imageData) => {
-          appendMessage(imageData, "received", true);
+        socket.on("receive image", (imageData,senderID, senderUsername) => {
+          appendMessage(imageData, senderID, senderUsername);
         });
 
         socket.on("connect", (response) => {
@@ -683,7 +683,7 @@
         }, 3000);
       }
 
-      function appendMessage(content, type, isImage = false) {
+      function appendMessage(content, senderID, senderUsername) {
         // room, message, senderID, senderUsername
         // const messageDiv = document.createElement('div');
         // messageDiv.classList.add('message', type);

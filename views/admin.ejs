@@ -89,6 +89,7 @@
         const roomsData = <%- JSON.stringify(roomsData) %>; // Pass the rooms data to the frontend
 
         function showMessages(room) {
+          console.trace(roomsData);
             const messages = roomsData[room].messages;
             let messageHTML = '<ul>';
             messages.forEach(msg => {
@@ -102,6 +103,8 @@
         }
 
         function showUsers(room) {
+            console.log("Rooms:",room);
+            console.log(roomsData);
             const users = Array.from(roomsData[room].users); // Assuming users are stored in a Set or array
             let userHTML = '<ul>';
             users.forEach(user => {

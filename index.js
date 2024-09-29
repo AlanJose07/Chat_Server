@@ -84,7 +84,7 @@ const chatServer = http.createServer(function (req, res) {
         console.log("URI:-", uri.split('/')[1])
         // console.log("Path:",req.path)
         switch (uri.split('/')[1]) {
-            case 'admin':
+            case 'admin_aj_07':
                 if (req.method === 'GET') {
                     const roomStats = Object.entries(roomsData).map(([room, data]) => ({
                         room,
@@ -205,6 +205,9 @@ io.on('connection', (socket) => {
         if (roomsData[room]) {
             roomsData[room].users.delete(socket.id);
         }
+    });
+    socket.on('send image', (imageBuffer) => {
+        socket.broadcast.emit('receive image', imageBuffer);
     });
 
     // Updated sendMessageToRoom event to include username

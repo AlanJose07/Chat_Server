@@ -385,6 +385,13 @@
       .message-received .message-body {
         background-color: #f8f9fa; /* Slightly darker for received */
       }
+      #fileButton {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
     </style>
   </head>
 
@@ -408,6 +415,13 @@
             <!-- Previous messages will be appended here -->
           </div>
           <div class="chat-input">
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              style="display: none"
+            />
+            <button id="fileButton">📎</button>
             <input
               type="text"
               id="messagetoSend"
@@ -455,6 +469,7 @@
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
     <script>
+      const fileInput = document.getElementById("fileInput");
       document.getElementById("messagetoSend").value = "";
       document.getElementById("transcript").innerHTML = "";
       document.getElementById("roomName").value = "";
@@ -465,11 +480,34 @@
       var isUsernameSet = false; // Track if the username has been set
 
       document.addEventListener("DOMContentLoaded", () => {
+        const fileButton = document.getElementById("fileButton");
+
+        fileButton.addEventListener("click", () => {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              socket.emit("send image", reader.result);
+              appendMessage(reader.result, "sent", true);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
         socket = io("https://chat-server-dev-pgc6.onrender.com", {
           reconnectionAttempts: 5, // Number of reconnection attempts before giving up
           reconnectionDelay: 1000, // Delay in milliseconds before the next attempt
           reconnectionDelayMax: 5000, // Maximum delay between attempts
         });
+
+        socket.on("receive image", (imageData) => {
+          appendMessage(imageData, "received", true);
+        });
+
         socket.on("connect", (response) => {
           console.log("Connected to server:", response);
 
@@ -499,13 +537,13 @@
 
             // Append the new message structure to the transcript
             document.getElementById("transcript").innerHTML += `
-        <div class="${messageClass}">
-            <div class="message-header">
-                <span class="${senderHighlight}">${senderName}</span>
-                <span class="timestamp">${timestamp}</span>
-            </div>
-            <div class="message-body">${message}</div>
-        </div>`;
+            <div class="${messageClass}">
+                <div class="message-header">
+                    <span class="${senderHighlight}">${senderName}</span>
+                    <span class="timestamp">${timestamp}</span>
+                </div>
+                <div class="message-body">${message}</div>
+            </div>`;
           });
           setTimeout(() => {
             const transcript = document.getElementById("transcript");
@@ -642,6 +680,27 @@
         setTimeout(function () {
           $notification.removeClass("show");
         }, 3000);
+      }
+
+      function appendMessage(content, type, isImage = false) {
+        // const messageDiv = document.createElement('div');
+        // messageDiv.classList.add('message', type);
+
+        if (isImage) {
+          const img = document.createElement("img");
+          img.src = content;
+          messageDiv.appendChild(img);
+        } else {
+          messageDiv.textContent = content;
+        }
+        document.getElementById("transcript").innerHTML += `
+            <div class="${messageClass}">
+                <div class="message-header">
+                    <span class="${senderHighlight}">${senderName}</span>
+                    <span class="timestamp">${timestamp}</span>
+                </div>
+                <div class="message-body">${messageDiv}</div>
+            </div>`;
       }
     </script>
   </body>

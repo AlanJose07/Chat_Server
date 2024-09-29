@@ -206,12 +206,14 @@ io.on('connection', (socket) => {
             roomsData[room].users.delete(socket.id);
         }
     });
-    socket.on('send image', (imageBuffer,room, senderID, senderUsername) => {
-        io.to(room).emit('receive image', imageBuffer, senderID, senderUsername);
+    socket.on('send_image_file', (imageBuffer,room, senderID, senderUsername) => {
+        console.table({"room":room,"senderID":senderID})
+        io.to(room).emit('receive image', imageBuffer, senderID, senderUsername,room);
     });
 
     // Updated sendMessageToRoom event to include username
     socket.on('sendMessageToRoom', (room, message, user_socketID, username) => {
+        console.log()
         // Check if the room exists in roomsData
         if (!roomsData[room]) {
             // If it doesn't exist, initialize it

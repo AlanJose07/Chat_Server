@@ -486,26 +486,61 @@
           fileInput.click();
         });
 
+        // fileInput.addEventListener("change", (event) => {
+        //   const file = event.target.files[0];
+        //   if (file) {
+        //     const reader = new FileReader();
+        //     reader.onloadend = () => {
+        //       console.log("render:",reader.result);
+        //       socket.emit("send image", reader.result,room, senderID, senderUsername);
+        //       // room, message, senderID, senderUsername
+        //       // appendMessage(reader.result, "sent", true);
+        //     };
+        //     // reader.readAsDataURL(file);
+        //   }
+        // });
+
         fileInput.addEventListener("change", (event) => {
           const file = event.target.files[0];
           if (file) {
             const reader = new FileReader();
+
             reader.onloadend = () => {
-              socket.emit("send image", reader.result,room, senderID, senderUsername);
-              // room, message, senderID, senderUsername
-              // appendMessage(reader.result, "sent", true);
+              console.log("render:", reader.result);
+              console.log(
+                "Room:",
+                room,
+                "Sender ID:",
+                user_socketID,
+                "Sender Username:",
+                username
+              );
+              socket.emit(
+                "send_image_file",
+                reader.result,
+                room,
+                user_socketID,
+                username
+              );
             };
-            // reader.readAsDataURL(file);
+
+            reader.onerror = (error) => {
+              console.error("Error reading file:", error);
+            };
+
+            reader.readAsDataURL(file);
           }
         });
-
+        // https://chat-server-dev-pgc6.onrender.com
+        // http://localhost:10000
         socket = io("https://chat-server-dev-pgc6.onrender.com", {
           reconnectionAttempts: 5, // Number of reconnection attempts before giving up
           reconnectionDelay: 1000, // Delay in milliseconds before the next attempt
           reconnectionDelayMax: 5000, // Maximum delay between attempts
         });
 
-        socket.on("receive image", (imageData,senderID, senderUsername) => {
+        socket.on("receive image", (imageData, senderID, senderUsername) => {
+          console.log("Image:", imageData);
           appendMessage(imageData, senderID, senderUsername);
         });
 
@@ -688,39 +723,37 @@
         // const messageDiv = document.createElement('div');
         // messageDiv.classList.add('message', type);
 
-        if (isImage) {
-          // Create an image element
-          let messageClass =
-              senderID === user_socketID
-                ? "message message-sent"
-                : "message message-received";
+        // Create an image element
+        let messageClass =
+          senderID === user_socketID
+            ? "message message-sent"
+            : "message message-received";
 
-            const now = new Date();
-            const options = {
-              hour: "numeric",
-              minute: "numeric",
-              second: "numeric",
-              hour12: true,
-            };
-            const timestamp = now.toLocaleTimeString("en-US", options);
+        const now = new Date();
+        const options = {
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          hour12: true,
+        };
+        const timestamp = now.toLocaleTimeString("en-US", options);
 
-            const senderName =
-              senderID === user_socketID ? "me" : senderUsername;
+        const senderName = senderID === user_socketID ? "me" : senderUsername;
 
-            const senderHighlight =
-              senderID === user_socketID ? "sender" : "senderOthers";
+        const senderHighlight =
+          senderID === user_socketID ? "sender" : "senderOthers";
 
-          const img = document.createElement("img");
-          img.src = content; // Assuming 'content' is the image URL
-          img.alt = "User Image"; // Add an alt attribute for accessibility
-          img.style.maxWidth = "100%"; // Optional: Ensure the image fits within the message body
+        const img = document.createElement("img");
+        img.src = content; // Assuming 'content' is the image URL
+        img.alt = "User Image"; // Add an alt attribute for accessibility
+        img.style.maxWidth = "100%"; // Optional: Ensure the image fits within the message body
 
-          // Create a message div to hold the image
-          const messageDiv = document.createElement("div");
-          messageDiv.appendChild(img); // Append the image to the messageDiv
+        // Create a message div to hold the image
+        const messageDiv = document.createElement("div");
+        messageDiv.appendChild(img); // Append the image to the messageDiv
 
-          // Append the messageDiv to the transcript
-          document.getElementById("transcript").innerHTML += `
+        // Append the messageDiv to the transcript
+        document.getElementById("transcript").innerHTML += `
           <div class="${messageClass}">
               <div class="message-header">
                   <span class="${senderHighlight}">${senderName}</span>
@@ -728,7 +761,6 @@
               </div>
               <div class="message-body">${messageDiv.outerHTML}</div>
           </div>`;
-        }
       }
     </script>
   </body>

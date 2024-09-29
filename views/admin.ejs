@@ -1,100 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f4f8;
-        margin: 0;
-        padding: 20px;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
 
-      h1 {
-        text-align: center;
-        color: #2196f3;
-      }
+        h1 {
+            text-align: center;
+            color: #2196f3;
+        }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-      th,
-      td {
-        padding: 12px;
-        text-align: left;
-        border: 1px solid #ddd;
-      }
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
 
-      th {
-        background-color: #2196f3;
-        color: white;
-      }
+        th {
+            background-color: #2196f3;
+            color: white;
+        }
 
-      tr:hover {
-        background-color: #f1f1f1;
-      }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
 
-      .details {
-        margin-top: 20px;
-        border: 1px solid #ddd;
-        padding: 10px;
-        background-color: #ffffff;
-      }
+        .details {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #ffffff;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <h1>Admin Dashboard</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Room Name</th>
-            <th>Number of Users</th>
-            <th>Number of Messages</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% rooms.forEach(room => { %>
-          <tr>
-            <td><%= room.room %></td>
-            <td><%= room.userCount %></td>
-            <td><%= room.messageCount %></td>
-            <td>
-              <button onclick="showMessages('<%= room.room %>')">
-                View Messages
-              </button>
-            </td>
-          </tr>
-          <% }) %>
-        </tbody>
-      </table>
+        <h1>Admin Dashboard</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room Name</th>
+                    <th>Number of Users</th>
+                    <th>Number of Messages</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% rooms.forEach(room => { %>
+                <tr>
+                    <td><%= room.room %></td>
+                    <td><%= room.userCount %></td>
+                    <td><%= room.messageCount %></td>
+                    <td>
+                        <button class="view-messages" data-room="<%= room.room %>">View Messages</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
 
-      <div id="messageDetails" class="details" style="display: none">
-        <h2>Message Details</h2>
-        <div id="messagesContent"></div>
-      </div>
+        <div id="messageDetails" class="details" style="display: none">
+            <h2>Message Details</h2>
+            <div id="messagesContent"></div>
+        </div>
     </div>
 
     <script>
-      const roomsData = <%= JSON.stringify(roomsData) %>; // Pass the rooms data to the frontend
+        const roomsData = <%= JSON.stringify(roomsData) %>; // Pass the rooms data to the frontend
 
-      function showMessages(room) {
-          const messages = roomsData[room].messages;
-          let messageHTML = '<ul>';
-          messages.forEach(msg => {
-              messageHTML += `<li><strong>${msg.username}:</strong> ${msg.message}</li>`;
-          });
-          messageHTML += '</ul>';
+        function showMessages(room) {
+            const messages = roomsData[room].messages;
+            let messageHTML = '<ul>';
+            messages.forEach(msg => {
+                messageHTML += `<li><strong>${msg.username}:</strong> ${msg.message}</li>`;
+            });
+            messageHTML += '</ul>';
 
-          document.getElementById('messagesContent').innerHTML = messageHTML;
-          document.getElementById('messageDetails').style.display = 'block';
-      }
+            document.getElementById('messagesContent').innerHTML = messageHTML;
+            document.getElementById('messageDetails').style.display = 'block';
+        }
+
+        // Attach event listeners to buttons
+        document.querySelectorAll('.view-messages').forEach(button => {
+            button.addEventListener('click', function() {
+                showMessages(this.getAttribute('data-room'));
+            });
+        });
     </script>
-  </body>
+</body>
 </html>

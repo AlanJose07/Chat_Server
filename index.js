@@ -2,9 +2,12 @@ const http = require('http');
 const mySql = require('mysql');
 const db = require('./db');
 const cors = require('cors');
+const { instrument } = require('@socket.io/admin-ui');
 const socketIo = require('socket.io');
 require('custom-env').env('stage');
 const fs = require('fs');
+
+
 
 
 console.log(process.env.NODE_ENV)
@@ -26,7 +29,8 @@ const userRooms = new Map();
 
 const allowedOriginList = ['http://localhost:3000',
     'http://localhost:3000', 'http://127.0.0.1:5501/testfile.html',
-    'http://127.0.0.1:5501', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500', 'http://127.0.0.1:5500','https://chat-server-3gs8.onrender.com','https://chat-server-dev-pgc6.onrender.com'
+    'https://admin.socket.io',
+    'http://127.0.0.1:5501', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500', 'http://127.0.0.1:5500', 'https://chat-server-3gs8.onrender.com', 'https://chat-server-dev-pgc6.onrender.com'
 ];
 
 if (process.env.DB_CONNECTION != "OFF") {
@@ -60,7 +64,8 @@ function dbCall(res, uri) {
 }
 const corsOptions = {
     origin: ['http://example.com', 'http://another-example.com', 'http://127.0.0.1:5501',
-        'http://127.0.0.1:5500', 'http://127.0.0.1:5500/','https://chat-server-3gs8.onrender.com','http://localhost:3000/socket.io','https://chat-server-dev-pgc6.onrender.com'], // Array of allowed origins
+        'https://admin.socket.io',
+        'http://127.0.0.1:5500', 'http://127.0.0.1:5500/', 'https://chat-server-3gs8.onrender.com', 'http://localhost:3000/socket.io', 'https://chat-server-dev-pgc6.onrender.com'], // Array of allowed origins
 };
 
 
@@ -98,7 +103,7 @@ const chatServer = http.createServer(function (req, res) {
                 res.write(JSON.stringify(json));
                 res.end();
                 break;
-            
+
             case 'goa_belt':
                 dbCall(res, uri.split('/')[2]);
                 break;
@@ -114,8 +119,8 @@ const chatServer = http.createServer(function (req, res) {
                     res.end('DB Connection Closed');
                 });
                 break;
-                case 'chatpage1':
-                fs.readFile(__dirname + "/chatpage1.html", function(err, contents) {
+            case 'chatpage1':
+                fs.readFile(__dirname + "/chatpage1.html", function (err, contents) {
                     if (err) {
                         res.writeHead(500);
                         res.end(err);
@@ -127,9 +132,9 @@ const chatServer = http.createServer(function (req, res) {
                 });
                 break;
             default:
-                 res.setHeader("Content-Type", "text/html");
-                 res.writeHead(404);
-                 res.end("<h1>Not Found</h1>");
+                res.setHeader("Content-Type", "text/html");
+                res.writeHead(404);
+                res.end("<h1>Not Found</h1>");
 
         }
 
@@ -177,5 +182,6 @@ io.on('connection', (socket) => {
     });
 });
 
+instrument(io, { auth: false })
 
 

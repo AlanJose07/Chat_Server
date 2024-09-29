@@ -206,9 +206,9 @@ io.on('connection', (socket) => {
             roomsData[room].users.delete(socket.id);
         }
     });
-    socket.on('send_image_file', (imageBuffer,room, senderID, senderUsername) => {
-        console.table({"room":room,"senderID":senderID})
-        io.to(room).emit('receive image', imageBuffer, senderID, senderUsername,room);
+    socket.on('send_image_file', (fileToSend,room, senderID, senderUsername) => {
+        console.table({"room":room,"senderID":senderID,"FileName":fileToSend.name,"fileType":fileToSend.type})
+        io.to(room).emit('receive files', fileToSend, senderID, senderUsername,room);
     });
 
     // Updated sendMessageToRoom event to include username

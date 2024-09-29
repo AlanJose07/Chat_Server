@@ -415,12 +415,7 @@
             <!-- Previous messages will be appended here -->
           </div>
           <div class="chat-input">
-            <input
-              type="file"
-              id="fileInput"
-              accept="image/*"
-              style="display: none"
-            />
+            <input type="file" id="fileInput" style="display: none" multiple />
             <button id="fileButton">📎</button>
             <input
               type="text"
@@ -501,10 +496,9 @@
         // });
 
         fileInput.addEventListener("change", (event) => {
-          const file = event.target.files[0];
-          if (file) {
+          const files = Array.from(event.target.files);
+          files.forEach((file) => {
             const reader = new FileReader();
-
             reader.onloadend = () => {
               console.log("render:", reader.result);
               console.log(
@@ -515,9 +509,14 @@
                 "Sender Username:",
                 username
               );
+              let fileToSend = {
+                name: file.name,
+                type: file.type,
+                data: reader.result,
+              };
               socket.emit(
                 "send_image_file",
-                reader.result,
+                fileToSend,
                 room,
                 user_socketID,
                 username
@@ -529,17 +528,17 @@
             };
 
             reader.readAsDataURL(file);
-          }
+          });
         });
         // https://chat-server-dev-pgc6.onrender.com
         // http://localhost:10000
-        socket = io("https://chat-server-dev-pgc6.onrender.com", {
+        socket = io("http://localhost:10000", {
           reconnectionAttempts: 5, // Number of reconnection attempts before giving up
           reconnectionDelay: 1000, // Delay in milliseconds before the next attempt
           reconnectionDelayMax: 5000, // Maximum delay between attempts
         });
 
-        socket.on("receive image", (imageData, senderID, senderUsername) => {
+        socket.on("receive files", (imageData, senderID, senderUsername) => {
           console.log("Image:", imageData);
           appendMessage(imageData, senderID, senderUsername);
         });
@@ -719,11 +718,51 @@
       }
 
       function appendMessage(content, senderID, senderUsername) {
-        // room, message, senderID, senderUsername
-        // const messageDiv = document.createElement('div');
-        // messageDiv.classList.add('message', type);
+        // let messageClass =
+        //   senderID === user_socketID
+        //     ? "message message-sent"
+        //     : "message message-received";
 
-        // Create an image element
+        // const now = new Date();
+        // const options = {
+        //   hour: "numeric",
+        //   minute: "numeric",
+        //   second: "numeric",
+        //   hour12: true,
+        // };
+        // const timestamp = now.toLocaleTimeString("en-US", options);
+
+        // const senderName = senderID === user_socketID ? "me" : senderUsername;
+        // const senderHighlight =
+        //   senderID === user_socketID ? "sender" : "senderOthers";
+
+        // // Create a message div
+        // const messageDiv = document.createElement("div");
+
+        // // Check if content is a file object (with data and name)
+        // if (content.data && content.name) {
+        //   const link = document.createElement("a");
+        //   link.href = content.data;
+        //   link.download = content.name; // Specify the filename for download
+        //   link.textContent = `📁 ${content.name}`;
+        //   link.classList.add("file-link");
+
+        //   messageDiv.appendChild(link); // Append the file link to the messageDiv
+        // } else {
+        //   // Assume content is a text message
+        //   messageDiv.textContent = content; // For regular text messages
+        // }
+
+        // // Append the messageDiv to the transcript
+        // document.getElementById("transcript").innerHTML += `
+        // <div class="${messageClass}">
+        //     <div class="message-header">
+        //         <span class="${senderHighlight}">${senderName}</span>
+        //         <span class="timestamp">${timestamp}</span>
+        //     </div>
+        //     <div class="message-body">${messageDiv.outerHTML}</div>
+        // </div>`;
+
         let messageClass =
           senderID === user_socketID
             ? "message message-sent"
@@ -739,29 +778,72 @@
         const timestamp = now.toLocaleTimeString("en-US", options);
 
         const senderName = senderID === user_socketID ? "me" : senderUsername;
-
         const senderHighlight =
           senderID === user_socketID ? "sender" : "senderOthers";
 
-        const img = document.createElement("img");
-        img.src = content; // Assuming 'content' is the image URL
-        img.alt = "User Image"; // Add an alt attribute for accessibility
-        img.style.maxWidth = "100%"; // Optional: Ensure the image fits within the message body
-
-        // Create a message div to hold the image
+        // Create a message div
         const messageDiv = document.createElement("div");
-        messageDiv.appendChild(img); // Append the image to the messageDiv
 
-        // Append the messageDiv to the transcript
+        // Check if content is a file object (with data and name)
+        if (content.data && content.name) {
+          const link = document.createElement("a");
+          link.href = content.data;
+          link.download = content.name; // Specify the filename for download
+          link.textContent = `📁 ${content.name}`;
+          link.classList.add("file-link");
+
+          // Display previews for images, videos, and PDFs
+          const previewDiv = document.createElement("div");
+          previewDiv.classList.add("file-preview");
+
+          if (content.type.startsWith("image/")) {
+            const img = document.createElement("img");
+            img.src = content.data;
+            img.width="200"
+            previewDiv.appendChild(img);
+          } else if (content.type === "application/pdf") {
+            const iframe = document.createElement("iframe");
+            iframe.src = content.data;
+            iframe.width = "200";
+            iframe.height = "150";
+            previewDiv.appendChild(iframe);
+          } else if (content.type.startsWith("video/")) {
+            const video = document.createElement("video");
+            video.src = content.data;
+            video.controls = true; // Show video controls
+            video.style.maxWidth = "100%";
+            previewDiv.appendChild(video);
+          } else if (
+            content.type ===
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            content.type === "application/msword"
+          ) {
+            previewDiv.innerHTML = `📄 <a href="${content.data}" target="_blank">Open Word Document</a>`;
+          } else if (
+            content.type ===
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+            content.type === "application/vnd.ms-excel"
+          ) {
+            previewDiv.innerHTML = `📊 <a href="${content.data}" target="_blank">Open Excel Document</a>`;
+          }
+
+          messageDiv.appendChild(link); // Append the file link to the messageDiv
+          messageDiv.appendChild(previewDiv); // Append the preview to the messageDiv
+        } else {
+          // Assume content is a text message
+          messageDiv.textContent = content; // For regular text messages
+        }
         document.getElementById("transcript").innerHTML += `
-          <div class="${messageClass}">
-              <div class="message-header">
-                  <span class="${senderHighlight}">${senderName}</span>
-                  <span class="timestamp">${timestamp}</span>
-              </div>
-              <div class="message-body">${messageDiv.outerHTML}</div>
-          </div>`;
+        <div class="${messageClass}">
+            <div class="message-header">
+                <span class="${senderHighlight}">${senderName}</span>
+                <span class="timestamp">${timestamp}</span>
+            </div>
+            <div class="message-body">${messageDiv.outerHTML}</div>
+        </div>`;
       }
+
+      //
     </script>
   </body>
 </html>

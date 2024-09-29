@@ -13,12 +13,14 @@ const fs = require('fs');
 console.log(process.env.NODE_ENV)
 
 const path = require('path');
+const ejs = require('ejs');
 
 // Get the directory name of the current file
 const dirName = path.dirname(__filename);
 
 // console.log("Path:", dirName);
 const userRooms = new Map();
+let roomsData = {};
 
 
 
@@ -82,6 +84,28 @@ const chatServer = http.createServer(function (req, res) {
         console.log("URI:-", uri.split('/')[1])
         // console.log("Path:",req.path)
         switch (uri.split('/')[1]) {
+            case 'admin':
+                if (req.method === 'GET') {
+                    const roomStats = Object.entries(roomsData).map(([room, data]) => ({
+                        room,
+                        userCount: data.users.size,
+                        messageCount: data.messages.length,
+                    }));
+                    // Render the EJS template
+                    ejs.renderFile(path.join(__dirname, 'views', 'admin.ejs'), { rooms: roomStats }, (err, html) => {
+                        if (err) {
+                            res.writeHead(500);
+                            res.end('Error rendering the admin page');
+                        } else {
+                            res.writeHead(200, { 'Content-Type': 'text/html' });
+                            res.end(html);
+                        }
+                    });
+                } else {
+                    res.writeHead(405);
+                    res.end('Method Not Allowed');
+                }
+                break;
             case 'user':
                 if (req.method === 'OPTIONS') {
                     res.end();
@@ -161,19 +185,33 @@ io.on('connection', (socket) => {
         socket.join(room);
         io.to(room).emit('socket_id', socket.id);
         console.log(`User Joined room: ${room}`);
-        userRooms.set(socket.id, room, socket);
-        console.log("Users List:", userRooms);
+
+        // Initialize room data if it doesn't exist
+        if (!roomsData[room]) {
+            roomsData[room] = {
+                users: new Set(),
+                messages: [],
+            };
+        }
+        roomsData[room].users.add(socket.id);
+        console.log("Users List:", roomsData[room].users.size);
         console.log("-----------------------------------------------------------");
     });
 
     socket.on('leave room', (room) => {
         socket.leave(room);
         console.log(`User Left room: ${room}`);
+        if (roomsData[room]) {
+            roomsData[room].users.delete(socket.id);
+        }
     });
 
     // Updated sendMessageToRoom event to include username
     socket.on('sendMessageToRoom', (room, message, user_socketID, username) => {
-        // Emit the message along with the room, user_socketID, and username
+        // Save the message
+        if (roomsData[room]) {
+            roomsData[room].messages.push({ user_socketID, username, message });
+        }
         io.to(room).emit('message', room, message, user_socketID, username);
         console.log(`${room}:-Message: ${message}:-User:`, user_socketID, `:-Username:`, username);
     });

@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="CRM Developer & Consultant portfolio showcasing professional skills and services."
+    />
+    <title>ALAN JOSE - CRM Developer & Consultant</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Global Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f4f6f9;
+        color: #333;
+        line-height: 1.6;
+        transition: all 0.3s ease;
+        padding: 0;
+        margin: 0;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Roboto", sans-serif;
+        font-weight: 500;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      #hero .container {
+        background-image: url("ai.jpg");
+        background-size: cover; /* This ensures the image covers the entire element */
+        background-position: center; /* This centers the image within the element */
+        background-repeat: no-repeat;
+      }
+      .container {
+        width: 90%;
+        margin: 0 auto;
+        max-width: 1200px;
+      }
+
+      /* Dark Mode */
+      body.dark-mode {
+        background-color: #121212;
+        color: #eaeaea;
+      }
+
+      header {
+        background-color: #1a2530;
+        padding: 30px 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        color: #fff;
+        font-size: 28px;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      nav ul li {
+        margin-left: 20px;
+      }
+
+      nav ul li a {
+        color: #fff;
+        font-weight: 500;
+        font-size: 18px;
+        transition: color 0.3s ease;
+      }
+
+      nav ul li a:hover {
+        color: #e74c3c;
+      }
+
+      /* Hero Section */
+      #hero {
+        background: linear-gradient(45deg, #3498db, #8e44ad);
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+        background-size: cover;
+        position: relative;
+        min-height: 100vh;
+      }
+
+      #hero::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+      }
+
+      #hero h2 {
+        font-size: 48px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      #hero p {
+        font-size: 20px;
+        margin-bottom: 30px;
+      }
+
+      .cta-button {
+        padding: 12px 30px;
+        background-color: #e74c3c;
+        border-radius: 30px;
+        color: white;
+        font-size: 18px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #c0392b;
+        transform: scale(1.05);
+      }
+
+      /* About Section */
+      #about {
+        background-color: #fff;
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      #about h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+
+      #about p {
+        font-size: 18px;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+      }
+      #sideprojects .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 4 items per row by default */
+        gap: 30px;
+        padding: 80px 20px;
+        background-color: #f9f9f9;
+      }
+      #skills .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 4 items per row by default */
+        gap: 30px;
+        padding: 80px 20px;
+        background-color: #f9f9f9;
+      }
+      #sideprojects .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 4 items per row by default */
+        gap: 30px;
+        padding: 80px 20px;
+        background-color: #f9f9f9;
+      }
+      .sideproject-item {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+      }
+      .skill-item {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+      }
+
+      .skill-item h3 {
+        font-size: 24px;
+        margin-top: 10px;
+      }
+      .sideprojects-item h3 {
+        font-size: 24px;
+        margin-top: 10px;
+      }
+
+      .skill-item p {
+        font-size: 16px;
+      }
+
+      .skill-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+      .sideprojects-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Responsive Design */
+      /* 3 items per row on medium screens */
+      @media (max-width: 1024px) {
+        #skills .container {
+          grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+        }
+      }
+
+      /* 2 items per row on smaller screens */
+      @media (max-width: 768px) {
+        #skills .container {
+          grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+        }
+      }
+
+      /* 1 item per row on very small screens (mobile) */
+      @media (max-width: 480px) {
+        #skills .container {
+          grid-template-columns: 1fr; /* 1 item per row */
+        }
+      }
+
+      /* Projects Section */
+      #projects {
+        padding: 80px 20px;
+        background-color: #fff;
+        text-align: center;
+      }
+
+      .projects-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .project-item {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .project-item h3 {
+        font-size: 22px;
+        margin-bottom: 15px;
+      }
+
+      .project-item p {
+        font-size: 16px;
+        color: #666;
+      }
+
+      .project-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Contact Section */
+      #contact {
+        background-color: #1a2530;
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        width: 80%;
+        padding: 14px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: none;
+        background-color: #f1f1f1;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .contact-form button {
+        background-color: #e74c3c;
+        padding: 15px 35px;
+        color: white;
+        font-size: 18px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .contact-form button:hover {
+        background-color: #c0392b;
+        transform: scale(1.05);
+      }
+
+      /* Footer */
+      footer {
+        background-color: #1a2530;
+        color: white;
+        padding: 30px 0;
+        text-align: center;
+      }
+
+      /* Dark Mode Toggle Button */
+      .dark-mode-btn {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        background-color: transparent;
+        border: 2px solid #fff;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        color: #fff;
+      }
+
+      .dark-mode-btn:hover {
+        background-color: #fff;
+        color: #333;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .social-links {
+        margin-top: 20px;
+      }
+
+      .social-links a {
+        color: white;
+        font-size: 24px;
+        margin: 0 15px;
+        transition: color 0.3s ease;
+      }
+
+      .social-links a:hover {
+        color: #e74c3c;
+      }
+      .social-links #LinkedIn {
+        color: #280d84;
+      }
+      .social-links #GitHub {
+        color: #000000;
+      }
+      .project-item .more-details {
+        display: none;
+        font-size: 14px;
+        color: #555;
+        margin-top: 15px;
+      }
+
+      .project-item .view-more-btn {
+        background-color: #e74c3c;
+        padding: 10px 20px;
+        color: white;
+        font-size: 16px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .project-item .view-more-btn:hover {
+        background-color: #c0392b;
+      }
+      .sideproject-item a {
+        color: blue;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">
+            <h1>ALAN JOSE</h1>
+          </div>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#sideprojects">Side Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+
+            <li>
+              <button class="dark-mode-btn" onclick="toggleDarkMode()">
+                🌙
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+      <div class="container">
+        <h2>Curated Works, Crafted with Precision</h2>
+        <p>
+          I am a CRM Developer & Consultant helping businesses build scalable,
+          efficient solutions.
+        </p>
+        <a href="#contact" class="cta-button">Get in Touch</a>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+      <div class="container">
+        <h2>About Me</h2>
+        <div class="about-content">
+          <img src="ALAN JOSE.jpg" alt="Alan Jose" class="about-image" />
+          <p>
+            A dedicated cloud developer experienced in analyzing and
+            understanding the client’s business strategy to determine system
+            architecture and achieve business goals. Passionately pursuing
+            opportunities and challenges in programming and development.
+          </p>
+          <div class="social-links">
+            <a
+              id="LinkedIn"
+              href="https://www.linkedin.com/in/alan-jose-25a259200"
+              target="_blank"
+              title="LinkedIn"
+            >
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a
+              id="GitHub"
+              href="https://github.com/ALAN-JO-SE"
+              target="_blank"
+              title="GitHub"
+            >
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+      <div class="container">
+        <div class="skill-item">
+          <h3>Oracle B2C Service Cloud</h3>
+          <!-- <p> -->
+          <ul>
+            <li>Agent BUI Extension</li>
+            <li>Customer Portal</li>
+            <li>Bussiness rules</li>
+            <li>Custom Porcess Model</li>
+            <li>Outof the box chat configuration</li>
+            <li>Workspace configuration</li>
+            <li>Reports</li>
+          </ul>
+          <!-- </p> -->
+        </div>
+        <div class="skill-item">
+          <h3>Oracle Field Service Cloud</h3>
+          <!-- <p>Routing , Message scenario configuration , plugin using Vuw and OJET</p> -->
+          <ul>
+            <li>Routing</li>
+            <li>Message Scenario</li>
+            <li>Plugin - Vue,OJET</li>
+            <li>Screen Configuration</li>
+            <li>Workskill ,Workzone configuration</li>
+          </ul>
+        </div>
+        <div class="skill-item">
+          <h3>Oracle Integration Cloud</h3>
+          <!-- <p>
+           File Server, Agent Connection
+          </p> -->
+          <ul>
+            <li>File Server</li>
+            <li>Agent Connection</li>
+          </ul>
+        </div>
+        <div class="skill-item">
+          <h3>Oracle Content Management</h3>
+          <!-- <p>
+           Folder Managemenet,Document integration
+          </p> -->
+          <ul>
+            <li>Folder Management</li>
+            <li>Document Integration</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+      <div class="container">
+        <h2>Projects</h2>
+        <div class="projects-gallery">
+          <!-- Burroughs -->
+          <div class="project-item">
+            <h3>Burroughs</h3>
+            <ul>
+              <li>
+                Developed a plugin using Vue.js and OJET to manage inventory and
+                equipment.
+              </li>
+              <li>Worked on designing and implementing message scenarios.</li>
+              <li>Configured user screens for enhanced functionality.</li>
+            </ul>
+          </div>
+
+          <!-- Husqvarna -->
+          <div class="project-item">
+            <h3>Husqvarna, US</h3>
+            <ul>
+              <li>
+                Built a Dealer Notification Portal (OSVC Customer Portal),
+                enabling supervisors to view and notify unscheduled dealers in
+                the OFS via email.
+              </li>
+              <li>
+                Built a flow to manage the automated submission of the customer
+                installation form and notify the third-party vendor responsible
+                for the installation.
+              </li>
+              <li>Provided support for a portal built in AngularJS.</li>
+            </ul>
+          </div>
+
+          <!-- Primech Services and Engineering -->
+          <div class="project-item">
+            <h3>Primech Services and Engineering Pte Ltd, Singapore</h3>
+            <ul>
+              <li>
+                Integrated Oracle Field Service Cloud with Oracle B2C Service
+                using REST APIs for creating synchronization between OSVC and
+                OFSC activity data.
+              </li>
+              <li>
+                Worked on BUI extension to handle the activity rescheduling.
+              </li>
+              <li>
+                Worked on extending reports to display custom data based on
+                activity type, slot filling, and remaining quota on a daily
+                basis.
+              </li>
+            </ul>
+
+            <div class="more-details">
+              <ul>
+                <li>
+                  Developed an extension for appointment rescheduling in OSVC,
+                  taking into account various factors such as technician
+                  availability, holiday and Quota.
+                </li>
+                <li>
+                  Designed Custom Process Models for service-related emails, SMS
+                  notifications and various other requirements.
+                </li>
+                <li>
+                  Worked on the OFS replacement project, focusing on the
+                  Dispatcher module, including internal activity creation and
+                  the time-based visualization of activities using Chart.js.
+                </li>
+                <li>
+                  Implemented a custom routing mechanism to assign technicians
+                  based on criteria such as work skill match for the activity,
+                  technician availability (e.g., checking for leave), daily
+                  activity load, and preventing overlapping activities for the
+                  same technician.
+                </li>
+                <li>
+                  Worked on message scenario to sync status and activity details
+                  to OSVC.
+                </li>
+              </ul>
+            </div>
+            <button class="view-more-btn" onclick="toggleDetails(this)">
+              View More
+            </button>
+          </div>
+
+          <!-- Alstra - B2B Service Automation -->
+          <div class="project-item">
+            <h3>
+              Alstra - B2B Service Automation - Concepcion Industrial
+              Corporation
+            </h3>
+            <ul>
+              <li>
+                Worked on implementing live inventory stock visibility from
+                Field Service using a plugin.
+              </li>
+              <li>
+                Developed a custom solution using a JavaScript library to
+                generate Field Service Reports (FSRs), incorporating logic for
+                splitting the content in half. This approach resulted in highly
+                reliable and useful PDF notes.
+              </li>
+              <li>
+                Created an integration for updating available slots for booking
+                services for the customer.
+              </li>
+            </ul>
+            <div class="more-details">
+              <ul>
+                <li>
+                  Built a custom solution to display the availability of OFSC
+                  technicians on the OSVC. Agents can view the availability by
+                  showing available time slots and available technicians.
+                </li>
+                <li>
+                  Worked on OFSC plugin to include additional information in the
+                  Field Service Reports, enabling agents to better monitor
+                  appointments.
+                </li>
+                <li>
+                  Configured work zones and work skills, calendars, message
+                  templates, resource types, and activity types.
+                </li>
+                <li>
+                  Addressed BUI extension bug fixes and implemented new
+                  features.
+                </li>
+                <li>
+                  Configured technician routing based on various factors such as
+                  work skill and work zone.
+                </li>
+              </ul>
+            </div>
+            <button class="view-more-btn" onclick="toggleDetails(this)">
+              View More
+            </button>
+          </div>
+
+          <!-- Intelsat Inflight LLC -->
+          <div class="project-item">
+            <h3>Intelsat Inflight LLC, USA</h3>
+            <ul>
+              <li>
+                Worked on the framework upgrade and testing of different
+                interfaces of the Customer Portal.
+              </li>
+              <li>
+                Worked on different mailbox changes and message template
+                changes.
+              </li>
+              <li>
+                Worked on BUI extension for showing the flight details as per
+                customer request.
+              </li>
+              <li>Worked on knowledge base.</li>
+            </ul>
+            <div class="more-details">
+              <ul>
+                <li>
+                  Configured chat business rules so that the customer can chat
+                  in another language according to their choice.
+                </li>
+                <li>
+                  Found a solution and implemented it for clearing the flight
+                  info cookie when chatting from a different airline and
+                  clearing it when closing the tab.
+                </li>
+                <li>
+                  Developed a filter in the Customer Portal to enable internal
+                  agents to access and view different airline information.
+                </li>
+              </ul>
+            </div>
+            <button class="view-more-btn" onclick="toggleDetails(this)">
+              View More
+            </button>
+          </div>
+
+          <!-- Concepcion – Carrier B2C Service Automation Management -->
+          <div class="project-item">
+            <h3>Concepcion – Carrier B2C Service Automation Management</h3>
+            <ul>
+              <li>
+                Developed integration for syncing data from Shopify stores to
+                Oracle Service Cloud.
+              </li>
+              <li>
+                Managed and enhanced integrations between Shopify and SAP.
+              </li>
+              <li>
+                Implemented REST API changes for the PC mobile application to
+                capture foot traffic and attendance.
+              </li>
+              <li>
+                Done a proof of concept (POC) to add a folder structure for
+                organizing training videos in the Customer Portal.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Beachbody LLC -->
+          <div class="project-item">
+            <h3>Beachbody LLC</h3>
+            <ul>
+              <li>
+                Developed configurable business hours for calls and chats,
+                enabling business users to modify them, ensuring end users can
+                only request services during business hours.
+              </li>
+              <li>
+                Worked on an extension for the contact lookup in EBS from OSVC
+                before creating a service request and updating the OSVC
+                information of the customer with the latest information from
+                EBS.
+              </li>
+            </ul>
+            <div class="more-details">
+              <ul>
+                <li>
+                  Developed a BUI extension to synchronize notes created by
+                  Oracle B2C Service agents with the EBS instance that will be
+                  used by the agent for the reprocessing of the order.
+                </li>
+                <li>
+                  Acquired expertise in Builder.io for developing custom
+                  components and delivered a proof of concept (POC) for form
+                  submission and data storage in OSVC.
+                </li>
+              </ul>
+            </div>
+            <button class="view-more-btn" onclick="toggleDetails(this)">
+              View More
+            </button>
+          </div>
+
+          <!-- RGE Legal -->
+          <div class="project-item">
+            <h3>RGE Legal</h3>
+            <ul>
+              <li>
+                Managed all technical and functional aspects of the data
+                migration process.
+              </li>
+              <li>
+                Collaborated with stakeholders and new vendors throughout the
+                process, preparing and delivering knowledge transfer (KT)
+                sessions.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Magrabi Health -->
+          <div class="project-item">
+            <h3>Magrabi Health</h3>
+            <ul>
+              <li>
+                Worked on integrating user data from Oracle ADW and Google
+                Sheets into Oracle Eloqua Marketing Cloud for campaign
+                management.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sideprojects">
+      <div class="container">
+        <h2>Side Projects</h2>
+        <!-- <div class="side-projects-gallery"> -->
+        <div class="sideproject-item">
+          <h3>Chat APP</h3>
+          <!-- <p> -->
+          <ul>
+            <li>Node JS</li>
+            <li>Socket IO</li>
+            <li>Render Hosting</li>
+          </ul>
+          <a
+            href="https://chat-server-dev-pgc6.onrender.com/chatpage1"
+            target="_blank"
+            >Chat APP</a
+          >
+          <!-- </p> -->
+        </div>
+        <div class="sideproject-item">
+          <h3>Clipboard</h3>
+          <ul>
+            <li>Python</li>
+          </ul>
+        </div>
+        <div class="sideproject-item">
+          <h3>Postman Visualisation</h3>
+          <ul>
+            <li>Node JS</li>
+            <li>Express JS</li>
+          </ul>
+        </div>
+        <div class="sideproject-item">
+          <h3>Video Call APP</h3>
+          <ul>
+            <li>Node JS</li>
+            <li>Socket IO</li>
+            <li>Express JS</li>
+          </ul>
+        </div>
+        <!-- </div> -->
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+      <div class="container">
+        <h2>Contact Me</h2>
+        <form class="contact-form">
+          <input type="text" placeholder="Your Name" required />
+          <input type="email" placeholder="Your Email" required />
+          <textarea placeholder="Your Message" required></textarea><br />
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 Alan Jose. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+      // Toggle Dark Mode
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+      }
+      function toggleDetails(button) {
+        var moreDetails = button.previousElementSibling;
+        if (moreDetails.style.display === "block") {
+          moreDetails.style.display = "none";
+          button.textContent = "View More";
+        } else {
+          moreDetails.style.display = "block";
+          button.textContent = "View Less";
+        }
+      }
+    </script>
+  </body>
+</html>

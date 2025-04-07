@@ -144,6 +144,18 @@ const chatServer = http.createServer(function (req, res) {
                     res.end('DB Connection Closed');
                 });
                 break;
+            case 'alanJose':
+                fs.readFile(__dirname + "/alan-jose.html", function (err, contents) {
+                    if (err) {
+                        res.writeHead(500);
+                        res.end(err);
+                        return;
+                    }
+                    res.setHeader("Content-Type", "text/html");
+                    res.writeHead(200);
+                    res.end(contents);
+                });
+                break;
             case 'chatpage1':
                 fs.readFile(__dirname + "/chatpage1.html", function (err, contents) {
                     if (err) {
